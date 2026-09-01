@@ -2,9 +2,9 @@
 
 A focused collaborative document workspace for small teams. Create and rename documents, edit rich HTML content in the browser, import `.txt` and `.md` files, and share documents with seeded teammates.
 
-## Reviewer quick start
+**Live demo:** https://docflow-xi-eight.vercel.app
 
-**Live production app:** https://docflow-xi-eight.vercel.app
+## Reviewer quick start
 
 1. Start the API and web services in two terminals:
 
