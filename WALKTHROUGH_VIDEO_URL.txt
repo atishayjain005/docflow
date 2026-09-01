@@ -1,9 +1,7 @@
-Walkthrough video URL: https://docflow-xi-eight.vercel.app/walkthrough/
+Walkthrough video URL: https://docflow-xi-eight.vercel.app/walkthrough-video.mp4
 
 Recording checklist:
 1. Start as Maya and show the workspace, seeded documents, and member switcher.
-2. Create or open a document, rename it, use bold/heading/list formatting, and save.
-3. Import a small Markdown file and show the resulting editable document.
-4. Share a document with Sam, switch to Sam, and show the Shared with me view.
-5. Explain the deliberate cuts: real auth, realtime editing, comments, version history, and DOCX parsing.
-6. Mention the PostgreSQL/Drizzle API boundary, generated OpenAPI hooks, smoke test, and AI workflow note.
+2. Open the seeded document and show the rich editor.
+3. Show the owner-only share flow for bringing in a teammate.
+4. Mention the PostgreSQL/Drizzle API boundary, generated hooks, smoke test, and documented tradeoffs.

@@ -17,7 +17,7 @@
 
 **Live app:** https://docflow-xi-eight.vercel.app
 
-**Product walkthrough:** https://docflow-xi-eight.vercel.app/walkthrough/
+**Product walkthrough video:** https://docflow-xi-eight.vercel.app/walkthrough-video.mp4
 
 There is no password-based login in this scoped build. Use the in-app member switcher:
 
@@ -28,7 +28,7 @@ There is no password-based login in this scoped build. Use the in-app member swi
 ## Required handoffs still outside the coding environment
 
 - Live deployment URL: https://docflow-xi-eight.vercel.app
-- Product walkthrough URL: https://docflow-xi-eight.vercel.app/walkthrough/
+- Product walkthrough video URL: https://docflow-xi-eight.vercel.app/walkthrough-video.mp4
 - Build process note: `BUILD_PROCESS.md`
 - Google Drive folder link: upload the source and markdown notes, then add the folder URL here.
-- Walkthrough video URL: https://docflow-xi-eight.vercel.app/walkthrough/
+- Walkthrough video URL: https://docflow-xi-eight.vercel.app/walkthrough-video.mp4

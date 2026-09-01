@@ -4,7 +4,7 @@ A focused collaborative document workspace for small teams. Create and rename do
 
 **Live demo:** https://docflow-xi-eight.vercel.app
 
-**Product walkthrough:** https://docflow-xi-eight.vercel.app/walkthrough/
+**Product walkthrough video:** https://docflow-xi-eight.vercel.app/walkthrough-video.mp4
 
 ## Reviewer quick start
 
@@ -57,7 +57,7 @@ Intentionally incomplete: real authentication, concurrent real-time editing, com
 ## Delivery notes
 
 - **Live deployment:** https://docflow-xi-eight.vercel.app
-- **Product walkthrough:** https://docflow-xi-eight.vercel.app/walkthrough/
+- **Product walkthrough video:** https://docflow-xi-eight.vercel.app/walkthrough-video.mp4
 - Build process note: `BUILD_PROCESS.md`
 - Architecture rationale: `ARCHITECTURE.md`
 - AI workflow note: `AI_WORKFLOW.md`
