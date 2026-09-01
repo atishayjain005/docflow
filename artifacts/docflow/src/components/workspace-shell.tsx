@@ -39,6 +39,12 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const currentUser = users.find((user) => user.id === currentUserId) ?? users[0] ?? fallback;
 
   useEffect(() => {
+    if (users.length > 0 && !users.some((user) => user.id === currentUserId)) {
+      setCurrentUserId(users[0].id);
+    }
+  }, [currentUserId, users]);
+
+  useEffect(() => {
     localStorage.setItem('docflow-user-id', currentUserId);
     queryClient.invalidateQueries({ queryKey: getListUsersQueryKey() });
     queryClient.invalidateQueries({ queryKey: getListDocumentsQueryKey() });
