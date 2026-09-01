@@ -1,0 +1,1 @@
+- [OpenAPI integer compatibility](zod-openapi-compat.md) — generated integer validators currently conflict with this workspace's installed Zod runtime.

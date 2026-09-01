@@ -10,6 +10,12 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: users
+    description: Seeded reviewer identities
+  - name: documents
+    description: Document creation, editing, import, and sharing
+  - name: dashboard
+    description: Workspace overview
 paths:
   /healthz:
     get:
@@ -24,7 +30,190 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /users:
+    get:
+      operationId: listUsers
+      tags: [users]
+      summary: List seeded users
+      responses:
+        "200":
+          description: Available demo users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+  /documents:
+    get:
+      operationId: listDocuments
+      tags: [documents]
+      summary: List documents visible to the current user
+      parameters:
+        - $ref: "#/components/parameters/UserIdHeader"
+      responses:
+        "200":
+          description: Owned and shared documents
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/DocumentListItem"
+    post:
+      operationId: createDocument
+      tags: [documents]
+      summary: Create a document
+      parameters:
+        - $ref: "#/components/parameters/UserIdHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DocumentInput"
+      responses:
+        "201":
+          description: Created document
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+  /documents/import:
+    post:
+      operationId: importDocument
+      tags: [documents]
+      summary: Import a text or Markdown file as a document
+      parameters:
+        - $ref: "#/components/parameters/UserIdHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DocumentImportInput"
+      responses:
+        "201":
+          description: Imported document
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+        "400":
+          description: Unsupported or empty import
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /documents/{id}:
+    get:
+      operationId: getDocument
+      tags: [documents]
+      summary: Get a document the current user can access
+      parameters:
+        - $ref: "#/components/parameters/UserIdHeader"
+        - $ref: "#/components/parameters/DocumentId"
+      responses:
+        "200":
+          description: Document
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+        "404":
+          description: Document not found or inaccessible
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    patch:
+      operationId: updateDocument
+      tags: [documents]
+      summary: Rename or save document content
+      parameters:
+        - $ref: "#/components/parameters/UserIdHeader"
+        - $ref: "#/components/parameters/DocumentId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DocumentUpdate"
+      responses:
+        "200":
+          description: Updated document
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+        "404":
+          description: Document not found or inaccessible
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /documents/{id}/share:
+    post:
+      operationId: shareDocument
+      tags: [documents]
+      summary: Grant another seeded user access to a document
+      parameters:
+        - $ref: "#/components/parameters/UserIdHeader"
+        - $ref: "#/components/parameters/DocumentId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ShareInput"
+      responses:
+        "200":
+          description: Updated document sharing state
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+        "400":
+          description: Invalid share target
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Document not found or not owned by current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /dashboard:
+    get:
+      operationId: getDashboard
+      tags: [dashboard]
+      summary: Get workspace summary and recent activity
+      parameters:
+        - $ref: "#/components/parameters/UserIdHeader"
+      responses:
+        "200":
+          description: Workspace summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Dashboard"
 components:
+  parameters:
+    UserIdHeader:
+      name: X-User-Id
+      in: header
+      required: true
+      schema:
+        type: string
+        minLength: 1
+    DocumentId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
   schemas:
     HealthStatus:
       type: object
@@ -33,4 +222,139 @@ components:
           type: string
       required:
         - status
+    User:
+      type: object
+      required: [id, name, email, initials, accent]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        initials:
+          type: string
+        accent:
+          type: string
+    DocumentListItem:
+      type: object
+      required: [id, title, ownerId, ownerName, updatedAt, wordCount, access, preview]
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        ownerId:
+          type: string
+        ownerName:
+          type: string
+        updatedAt:
+          type: string
+          format: date-time
+        wordCount:
+          type: number
+        access:
+          type: string
+          enum: [owned, shared]
+        preview:
+          type: string
+    Document:
+      type: object
+      required: [id, title, content, ownerId, ownerName, updatedAt, createdAt, wordCount, access, shares]
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        content:
+          type: string
+        ownerId:
+          type: string
+        ownerName:
+          type: string
+        updatedAt:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        wordCount:
+          type: number
+        access:
+          type: string
+          enum: [owned, shared]
+        shares:
+          type: array
+          items:
+            $ref: "#/components/schemas/Share"
+    Share:
+      type: object
+      required: [userId, userName, userEmail, initials, accent, sharedAt]
+      properties:
+        userId:
+          type: string
+        userName:
+          type: string
+        userEmail:
+          type: string
+        initials:
+          type: string
+        accent:
+          type: string
+        sharedAt:
+          type: string
+          format: date-time
+    DocumentInput:
+      type: object
+      required: [title, content]
+      properties:
+        title:
+          type: string
+          minLength: 1
+        content:
+          type: string
+    DocumentUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+        content:
+          type: string
+    DocumentImportInput:
+      type: object
+      required: [filename, content]
+      properties:
+        filename:
+          type: string
+          minLength: 1
+        content:
+          type: string
+    ShareInput:
+      type: object
+      required: [userId]
+      properties:
+        userId:
+          type: string
+          minLength: 1
+    Dashboard:
+      type: object
+      required: [ownedCount, sharedCount, totalWords, recent]
+      properties:
+        ownedCount:
+          type: number
+        sharedCount:
+          type: number
+        totalWords:
+          type: number
+        recent:
+          type: array
+          items:
+            $ref: "#/components/schemas/DocumentListItem"
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
 

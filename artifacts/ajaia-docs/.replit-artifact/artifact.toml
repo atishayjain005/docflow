@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Ajaia Docs"
+description = "A lightweight collaborative document workspace for creating, formatting, importing, saving, and sharing internal documents with a small team."
+version = "1.0.0"
+id = "artifacts/ajaia-docs"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 25803
+
+[services.development]
+run = "pnpm --filter @workspace/ajaia-docs run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/ajaia-docs", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/ajaia-docs/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25803"
+BASE_PATH = "/"

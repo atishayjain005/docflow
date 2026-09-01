@@ -1,0 +1,9 @@
+Walkthrough video URL: NOT RECORDED YET
+
+Recording checklist:
+1. Start as Maya and show the workspace, seeded documents, and member switcher.
+2. Create or open a document, rename it, use bold/heading/list formatting, and save.
+3. Import a small Markdown file and show the resulting editable document.
+4. Share a document with Sam, switch to Sam, and show the Shared with me view.
+5. Explain the deliberate cuts: real auth, realtime editing, comments, version history, and DOCX parsing.
+6. Mention the PostgreSQL/Drizzle API boundary, generated OpenAPI hooks, smoke test, and AI workflow note.
