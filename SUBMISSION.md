@@ -14,6 +14,8 @@
 
 ## Reviewer access
 
+**Live app:** https://docflow-xi-eight.vercel.app
+
 There is no password-based login in this scoped build. Use the in-app member switcher:
 
 - Maya Chen (`maya`) — owner of the seeded welcome document
@@ -22,6 +24,6 @@ There is no password-based login in this scoped build. Use the in-app member swi
 
 ## Required handoffs still outside the coding environment
 
-- Live deployment URL: publish the web artifact, then add the resulting URL here.
+- Live deployment URL: https://docflow-xi-eight.vercel.app
 - Google Drive folder link: upload the source and markdown notes, then add the folder URL here.
 - Walkthrough video URL: record the 3–5 minute walkthrough and replace the placeholder in `WALKTHROUGH_VIDEO_URL.txt`.

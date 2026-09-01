@@ -4,6 +4,8 @@ A focused collaborative document workspace for small teams. Create and rename do
 
 ## Reviewer quick start
 
+**Live production app:** https://docflow-xi-eight.vercel.app
+
 1. Start the API and web services in two terminals:
 
    ```bash
@@ -32,7 +34,7 @@ pnpm --filter @workspace/api-spec run codegen
 pnpm run typecheck
 ```
 
-The project uses the preconfigured PostgreSQL database via `DATABASE_URL`. The API seeds three demo users and two starter documents on first request.
+The project uses PostgreSQL via `DATABASE_URL`. For local development, set `DATABASE_URL` in `.env.local`. On Vercel, provision Neon (or Vercel Postgres) and add `DATABASE_URL` to the project environment — the build runs `drizzle-kit push` to sync the schema. The API seeds three demo users and two starter documents on first request.
 
 ## Automated validation
 
@@ -52,6 +54,7 @@ Intentionally incomplete: real authentication, concurrent real-time editing, com
 
 ## Delivery notes
 
+- **Live deployment:** https://docflow-xi-eight.vercel.app
 - Architecture rationale: `ARCHITECTURE.md`
 - AI workflow note: `AI_WORKFLOW.md`
 - Submission checklist: `SUBMISSION.md`
