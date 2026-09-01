@@ -28,3 +28,10 @@ mtime_ms = 1788259326563
 storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:ebf79629-bd21-4867-a405-d4cd0a24fafd/c552ec46-094a-46d3-952f-e2203648346f/547b2ea8-1dd9-486c-98cd-28d5b167189c"
 storage_version_token = "1788259357619290"
 content_type = "image/jpeg"
+
+[[outputs]]
+id = "NiWEukNW3HU1VVO_34yeq"
+uri = "file://artifacts/ajaia-docs-video/public/audio/bg_music.mp3"
+type = "audio"
+title = "Ajaia Docs background music"
+description = "Generated music: Instrumental lo-fi hip hop background music scoring a warm editorial productivity product film. Soft electric piano, brushed percussion, muted bass, subtle tape texture, 92 BPM, calm…"

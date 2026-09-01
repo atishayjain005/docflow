@@ -1,0 +1,29 @@
+kind = "video"
+previewPath = "/ajaia-docs-video/"
+title = "Ajaia Docs — Product Story"
+description = "A square animated product story showing how Ajaia Docs helps teams create, edit, import, and share focused collaborative documents."
+version = "1.0.0"
+id = "artifacts/ajaia-docs-video"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/ajaia-docs-video/" ]
+localPort = 22064
+
+[services.development]
+run = "pnpm --filter @workspace/ajaia-docs-video run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/ajaia-docs-video", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/ajaia-docs-video/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "22064"
+BASE_PATH = "/ajaia-docs-video/"
+videoAspectRatio = "1:1"
