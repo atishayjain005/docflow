@@ -8,7 +8,7 @@ import {
   unique,
 } from "drizzle-orm/pg-core";
 
-export const usersTable = pgTable("ajaia_users", {
+export const usersTable = pgTable("docflow_users", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
@@ -17,7 +17,7 @@ export const usersTable = pgTable("ajaia_users", {
 });
 
 export const documentsTable = pgTable(
-  "ajaia_documents",
+  "docflow_documents",
   {
     id: text("id").primaryKey(),
     title: text("title").notNull(),
@@ -33,11 +33,11 @@ export const documentsTable = pgTable(
       .defaultNow(),
     wordCount: integer("word_count").notNull().default(0),
   },
-  (table) => [index("ajaia_documents_owner_idx").on(table.ownerId)],
+  (table) => [index("docflow_documents_owner_idx").on(table.ownerId)],
 );
 
 export const documentSharesTable = pgTable(
-  "ajaia_document_shares",
+  "docflow_document_shares",
   {
     id: text("id").primaryKey(),
     documentId: text("document_id")
@@ -51,8 +51,8 @@ export const documentSharesTable = pgTable(
       .defaultNow(),
   },
   (table) => [
-    unique("ajaia_document_share_unique").on(table.documentId, table.userId),
-    index("ajaia_document_shares_user_idx").on(table.userId),
+    unique("docflow_document_share_unique").on(table.documentId, table.userId),
+    index("docflow_document_shares_user_idx").on(table.userId),
   ],
 );
 

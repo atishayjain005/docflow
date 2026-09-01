@@ -2,14 +2,14 @@
 
 ## Included
 
-- `artifacts/ajaia-docs/` — runnable Ajaia Docs web application
+- `artifacts/docflow/` — runnable DocFlow web application
 - `artifacts/api-server/` — Express API routes
 - `lib/api-spec/openapi.yaml` — API source of truth
 - `lib/db/src/schema/documents.ts` — PostgreSQL/Drizzle schema
 - `README.md` — setup, reviewer flow, scope, and validation
 - `ARCHITECTURE.md` — architecture decisions and tradeoffs
 - `AI_WORKFLOW.md` — AI usage and verification note
-- `scripts/src/ajaia-docs-smoke.ts` — meaningful automated end-to-end API smoke test
+- `scripts/src/docflow-smoke.ts` — meaningful automated end-to-end API smoke test
 - `WALKTHROUGH_VIDEO_URL.txt` — walkthrough handoff status
 
 ## Reviewer access

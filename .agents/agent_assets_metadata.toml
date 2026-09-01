@@ -3,9 +3,9 @@ generated = []
 
 [[outputs]]
 id = "uyXMqJSdc0vx5fUrosW7f"
-uri = "file://screenshots/ajaia-docs-workspace.jpg"
+uri = "file://screenshots/docflow-workspace.jpg"
 type = "image"
-title = "Ajaia Docs workspace screenshot"
+title = "DocFlow workspace screenshot"
 description = "Clean seeded workspace with owned/shared document navigation, dashboard summary, import, and create actions."
 logical_id = "b3337758-5fc7-4ef7-aaeb-e6d663fc2442"
 content_hash = "sha256:c76a4b9b4c63d780964bc08254ee2830417959a9395350f919d765067b3df8a5"
@@ -17,9 +17,9 @@ content_type = "image/jpeg"
 
 [[outputs]]
 id = "IZP_m-SxejbkqvIWZSicc"
-uri = "file://screenshots/ajaia-docs-editor.jpg"
+uri = "file://screenshots/docflow-editor.jpg"
 type = "image"
-title = "Ajaia Docs editor screenshot"
+title = "DocFlow editor screenshot"
 description = "Rich document editor with formatting toolbar, save state, and owner sharing action."
 logical_id = "c552ec46-094a-46d3-952f-e2203648346f"
 content_hash = "sha256:add6625d92646c8a643aba59cc89d6b71ce29d54dea559749cd0665b4405c1f1"
@@ -31,7 +31,7 @@ content_type = "image/jpeg"
 
 [[outputs]]
 id = "NiWEukNW3HU1VVO_34yeq"
-uri = "file://artifacts/ajaia-docs-video/public/audio/bg_music.mp3"
+uri = "file://artifacts/docflow-video/public/audio/bg_music.mp3"
 type = "audio"
-title = "Ajaia Docs background music"
+title = "DocFlow background music"
 description = "Generated music: Instrumental lo-fi hip hop background music scoring a warm editorial productivity product film. Soft electric piano, brushed percussion, muted bass, subtle tape texture, 92 BPM, calm…"

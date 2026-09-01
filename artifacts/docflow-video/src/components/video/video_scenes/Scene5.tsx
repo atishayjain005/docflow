@@ -16,8 +16,8 @@ export function Scene5() {
       <SafeFrame>
         <motion.div style={{ position: 'absolute', left: '7vmin', top: '8vmin', zIndex: 5 }} initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .28, duration: .7 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1.2vmin', marginBottom: '2.4vmin' }}>
-            <span style={{ width: '3.1vmin', height: '3.1vmin', borderRadius: '.8vmin', background: '#ffab58', display: 'grid', placeItems: 'center', color: '#173d3e', fontWeight: 800, fontSize: '1.55vmin' }}>a</span>
-            <span className="display" style={{ fontWeight: 800, fontSize: '2.1vmin', letterSpacing: '-.08em' }}>ajaia docs</span>
+            <span style={{ width: '3.1vmin', height: '3.1vmin', borderRadius: '.8vmin', background: '#ffab58', display: 'grid', placeItems: 'center', color: '#173d3e', fontWeight: 800, fontSize: '1.55vmin' }}>D</span>
+            <span className="display" style={{ fontWeight: 800, fontSize: '2.1vmin', letterSpacing: '-.08em' }}>DocFlow</span>
           </div>
           <VideoText as="h2" scale="heading" className="display" style={{ fontSize: 'clamp(2.5rem, 8.4vmin, 6rem)', fontWeight: 800, maxWidth: '76vmin' }}>
             Good work<br /><span style={{ color: '#ffab58' }}>has room to move.</span>
@@ -26,12 +26,12 @@ export function Scene5() {
 
         <motion.div className="screen-shell screen-shadow" style={{ position: 'absolute', left: '9vmin', top: '43vmin', width: '61vmin', height: '43vmin', transform: 'rotate(-4.3deg)', zIndex: 2 }} initial={{ opacity: 0, x: -35, y: 28, rotate: -8, scale: .85 }} animate={{ opacity: 1, x: 0, y: 0, rotate: -4.3, scale: 1 }} transition={{ delay: .62, duration: 1.15, ease: [0.16, 1, .3, 1] }}>
           <MediaFrame fit="cover" position="top">
-            <img src={`${BASE}screenshots/ajaia-docs-workspace.jpg`} alt="Ajaia Docs workspace" />
+            <img src={`${BASE}screenshots/docflow-workspace.jpg`} alt="DocFlow workspace" />
           </MediaFrame>
         </motion.div>
         <motion.div className="screen-shell screen-shadow" style={{ position: 'absolute', left: '47vmin', top: '52vmin', width: '47vmin', height: '35vmin', transform: 'rotate(5deg)', zIndex: 3 }} initial={{ opacity: 0, x: 32, y: 34, rotate: 10, scale: .82 }} animate={{ opacity: 1, x: 0, y: 0, rotate: 5, scale: 1 }} transition={{ delay: .92, duration: 1.05, ease: [0.16, 1, .3, 1] }}>
           <MediaFrame fit="cover" position="top">
-            <img src={`${BASE}screenshots/ajaia-docs-editor.jpg`} alt="Ajaia Docs document editor" />
+            <img src={`${BASE}screenshots/docflow-editor.jpg`} alt="DocFlow document editor" />
           </MediaFrame>
         </motion.div>
 

@@ -29,7 +29,7 @@ export function Scene4() {
 
         <motion.div className="screen-shell screen-shadow" style={{ position: 'absolute', left: '47vmin', top: '16vmin', width: '51vmin', height: '67vmin', zIndex: 3, transform: 'rotate(2.2deg)' }} initial={{ opacity: 0, x: 35, rotate: 5, scale: .91 }} animate={{ opacity: 1, x: 0, rotate: 2.2, scale: 1 }} transition={{ delay: .48, duration: 1.05, ease: [0.16, 1, .3, 1] }}>
           <MediaFrame fit="cover" position="top">
-            <img src={`${BASE}screenshots/ajaia-docs-editor.jpg`} alt="Ajaia Docs editor with share context" />
+            <img src={`${BASE}screenshots/docflow-editor.jpg`} alt="DocFlow editor with share context" />
           </MediaFrame>
         </motion.div>
 

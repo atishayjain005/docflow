@@ -18,8 +18,8 @@ export function Scene1() {
           style={{ position: 'absolute', top: '7vmin', left: '7vmin', display: 'flex', alignItems: 'center', gap: '1.4vmin', zIndex: 4 }}
           initial={{ opacity: 0, x: -18 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: .35, duration: .5 }}
         >
-          <span style={{ width: '3.2vmin', height: '3.2vmin', borderRadius: '.8vmin', background: '#ffab58', display: 'grid', placeItems: 'center', color: '#173d3e', fontWeight: 800, fontSize: '1.6vmin' }}>a</span>
-          <span className="display" style={{ fontWeight: 800, fontSize: '2.2vmin', letterSpacing: '-.08em' }}>ajaia.</span>
+          <span style={{ width: '3.2vmin', height: '3.2vmin', borderRadius: '.8vmin', background: '#ffab58', display: 'grid', placeItems: 'center', color: '#173d3e', fontWeight: 800, fontSize: '1.6vmin' }}>D</span>
+          <span className="display" style={{ fontWeight: 800, fontSize: '2.2vmin', letterSpacing: '-.08em' }}>DocFlow</span>
           <span className="mono" style={{ opacity: .62, fontSize: '1vmin', marginLeft: '1.8vmin' }}>PRODUCT STORY / 01</span>
         </motion.div>
 
@@ -42,7 +42,7 @@ export function Scene1() {
           transition={{ delay: .95, duration: 1.1, ease: [0.16, 1, .3, 1] }}
         >
           <MediaFrame fit="cover" position="top">
-            <img src={`${BASE}screenshots/ajaia-docs-workspace.jpg`} alt="Ajaia Docs workspace overview" />
+            <img src={`${BASE}screenshots/docflow-workspace.jpg`} alt="DocFlow workspace overview" />
           </MediaFrame>
         </motion.div>
         <motion.div

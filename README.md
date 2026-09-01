@@ -1,4 +1,4 @@
-# Ajaia Docs
+# DocFlow
 
 A focused collaborative document workspace for small teams. Create and rename documents, edit rich HTML content in the browser, import `.txt` and `.md` files, and share documents with seeded teammates.
 
@@ -8,7 +8,7 @@ A focused collaborative document workspace for small teams. Create and rename do
 
    ```bash
    pnpm --filter @workspace/api-server run dev
-   pnpm --filter @workspace/ajaia-docs run dev
+   pnpm --filter @workspace/docflow run dev
    ```
 
 2. Open the web preview.
@@ -16,7 +16,7 @@ A focused collaborative document workspace for small teams. Create and rename do
    - **Maya Chen** (`maya`) owns the seeded welcome document.
    - **Sam Rivera** (`sam`) owns “Q3 planning notes”.
    - **Noor Patel** (`noor`) is available as another share target.
-4. As Maya, open “Welcome to Ajaia Docs”, edit the title or content, click **Save**, then use **Share** to grant Sam access.
+4. As Maya, open “Welcome to DocFlow”, edit the title or content, click **Save**, then use **Share** to grant Sam access.
 5. Switch to Sam and confirm the document appears under **Shared with me**.
 
 The import flow intentionally supports `.txt`, `.md`, and `.markdown` only. Markdown headings and ordered/unordered lists are converted into editable rich content. `.docx` and binary attachments are intentionally out of scope for this timeboxed slice.
@@ -39,10 +39,10 @@ The project uses the preconfigured PostgreSQL database via `DATABASE_URL`. The A
 With the API service running:
 
 ```bash
-pnpm --filter @workspace/scripts run test:ajaia-docs
+pnpm --filter @workspace/scripts run smoke
 ```
 
-The smoke test creates a temporary document, saves formatted HTML content, shares it with Sam, and verifies that Sam can see it as a shared document. To target another API URL, set `AJAIA_API_BASE_URL` to the `/api` base.
+The smoke test creates a temporary document, saves formatted HTML content, shares it with Sam, and verifies that Sam can see it as a shared document. To target another API URL, set `DOCFLOW_API_BASE_URL` to the `/api` base.
 
 ## Scope and next steps
 

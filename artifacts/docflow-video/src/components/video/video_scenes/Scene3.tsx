@@ -36,7 +36,7 @@ export function Scene3() {
           transition={{ delay: .55, duration: 1.15, ease: [0.16, 1, .3, 1] }}
         >
           <MediaFrame fit="cover" position="top">
-            <img src={`${BASE}screenshots/ajaia-docs-editor.jpg`} alt="Ajaia Docs rich text editor" />
+            <img src={`${BASE}screenshots/docflow-editor.jpg`} alt="DocFlow rich text editor" />
           </MediaFrame>
           <motion.div style={{ position: 'absolute', left: '53%', top: '23%', width: '1px', height: '8vmin', background: '#ffab58', transformOrigin: 'top' }} initial={{ scaleY: 0 }} animate={{ scaleY: [0, 1, 1, 0] }} transition={{ delay: 1.25, duration: 1.6, times: [0, .35, .8, 1] }} />
         </motion.div>

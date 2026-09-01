@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 
-const baseUrl = process.env.AJAIA_API_BASE_URL ?? "http://localhost:80/api";
+const baseUrl = process.env.DOCFLOW_API_BASE_URL ?? "http://localhost:80/api";
 
 async function request(path: string, init?: RequestInit) {
   const response = await fetch(`${baseUrl}${path}`, {
@@ -53,4 +53,4 @@ const samDocuments = (await request("/documents", {
 })) as unknown as Array<{ id: string; access: string }>;
 assert.equal(samDocuments.some((document) => document.id === id && document.access === "shared"), true);
 
-console.log("Ajaia Docs smoke test passed: create, save, share, and shared access.");
+console.log("DocFlow smoke test passed: create, save, share, and shared access.");

@@ -29,7 +29,7 @@ export function useWorkspace() {
 }
 
 export function WorkspaceProvider({ children }: { children: ReactNode }) {
-  const [currentUserId, setCurrentUserId] = useState(() => localStorage.getItem('ajaia-user-id') ?? 'maya');
+  const [currentUserId, setCurrentUserId] = useState(() => localStorage.getItem('docflow-user-id') ?? 'maya');
   const queryClient = useQueryClient();
   const request = useMemo(() => ({ headers: { 'X-User-Id': currentUserId } }), [currentUserId]);
   const usersQuery = useListUsers({ request });
@@ -38,7 +38,7 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const currentUser = users.find((user) => user.id === currentUserId) ?? users[0] ?? fallback;
 
   useEffect(() => {
-    localStorage.setItem('ajaia-user-id', currentUserId);
+    localStorage.setItem('docflow-user-id', currentUserId);
     queryClient.invalidateQueries({ queryKey: getListUsersQueryKey() });
     queryClient.invalidateQueries({ queryKey: getListDocumentsQueryKey() });
     queryClient.invalidateQueries({ queryKey: getGetDashboardQueryKey() });
@@ -122,7 +122,7 @@ export function WorkspaceShell({ children }: { children: ReactNode }) {
         <div className="mb-11 flex items-center justify-between px-2">
           <Link href="/" data-testid="link-brand" onClick={closeMobile} className="flex items-center gap-2.5">
             <span className="relative grid h-9 w-9 place-items-center rounded-[11px] bg-[hsl(var(--accent))] text-[hsl(var(--foreground))] shadow-[4px_4px_0_hsl(var(--primary)/.45)]"><Sparkles className="h-4 w-4" /></span>
-            <span className="text-[17px] font-extrabold tracking-[-.04em]">ajaia<span className="text-[hsl(var(--accent))]">.</span></span>
+            <span className="text-[17px] font-extrabold tracking-[-.04em]">DocFlow</span>
           </Link>
           <button type="button" data-testid="button-close-mobile-nav" onClick={closeMobile} className="rounded-md p-1.5 text-[hsl(var(--sidebar-foreground)/.6)] hover:bg-[hsl(var(--sidebar-accent))] md:hidden"><X className="h-4 w-4" /></button>
         </div>

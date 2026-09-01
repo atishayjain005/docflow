@@ -1,5 +1,5 @@
 import { Router, type IRouter } from "express";
-import { and, desc, eq, inArray } from "drizzle-orm";
+import { desc, eq, inArray } from "drizzle-orm";
 import { db, documentSharesTable, documentsTable, usersTable } from "@workspace/db";
 import {
   CreateDocumentBody,
@@ -18,17 +18,14 @@ import {
   UpdateDocumentResponse,
 } from "@workspace/api-zod";
 import { createId, seedDemoData } from "../lib/seed";
+import { requireUser } from "../middlewares/auth";
 
 const router: IRouter = Router();
+router.use(requireUser);
 
 type UserRow = typeof usersTable.$inferSelect;
 type DocumentRow = typeof documentsTable.$inferSelect;
 type ShareRow = typeof documentSharesTable.$inferSelect;
-
-function currentUserId(req: Parameters<Parameters<IRouter["get"]>[1]>[0]): string | null {
-  const value = req.get("X-User-Id");
-  return value?.trim() || null;
-}
 
 function wordCount(content: string): number {
   const text = content
@@ -116,30 +113,55 @@ async function getUsersById(ids: string[]): Promise<Map<string, UserRow>> {
 }
 
 async function getWorkspaceRows(userId: string) {
-  const [documents, shares] = await Promise.all([
+  const userShares = await db
+    .select()
+    .from(documentSharesTable)
+    .where(eq(documentSharesTable.userId, userId));
+
+  const sharedDocIds = userShares.map((s) => s.documentId);
+
+  const [owned, shared] = await Promise.all([
     db
       .select()
       .from(documentsTable)
+      .where(eq(documentsTable.ownerId, userId))
       .orderBy(desc(documentsTable.updatedAt)),
-    db.select().from(documentSharesTable),
+    sharedDocIds.length > 0
+      ? db
+          .select()
+          .from(documentsTable)
+          .where(inArray(documentsTable.id, sharedDocIds))
+          .orderBy(desc(documentsTable.updatedAt))
+      : Promise.resolve([] as (typeof documentsTable.$inferSelect)[]),
   ]);
-  const visibleShares = shares.filter((share) => share.userId === userId);
-  const visibleIds = new Set([
-    ...documents.filter((doc) => doc.ownerId === userId).map((doc) => doc.id),
-    ...visibleShares.map((share) => share.documentId),
-  ]);
-  const visibleDocuments = documents.filter((doc) => visibleIds.has(doc.id));
+
+  const seen = new Set<string>();
+  const visibleDocuments: (typeof documentsTable.$inferSelect)[] = [];
+  for (const doc of [...owned, ...shared]) {
+    if (!seen.has(doc.id)) {
+      seen.add(doc.id);
+      visibleDocuments.push(doc);
+    }
+  }
+
+  const visibleIds = visibleDocuments.map((d) => d.id);
+  const allShares =
+    visibleIds.length > 0
+      ? await db
+          .select()
+          .from(documentSharesTable)
+          .where(inArray(documentSharesTable.documentId, visibleIds))
+      : [];
+
   const userIds = [
     ...new Set([
-      ...visibleDocuments.map((doc) => doc.ownerId),
-      ...visibleShares.map((share) => share.userId),
-      ...shares
-        .filter((share) => visibleIds.has(share.documentId))
-        .map((share) => share.userId),
+      ...visibleDocuments.map((d) => d.ownerId),
+      ...allShares.map((s) => s.userId),
     ]),
   ];
   const users = await getUsersById(userIds);
-  return { documents: visibleDocuments, shares, users };
+
+  return { documents: visibleDocuments, shares: allShares, users };
 }
 
 function toShare(share: ShareRow, user: UserRow) {
@@ -200,224 +222,232 @@ function toListItem(
 }
 
 router.get("/documents", async (req, res): Promise<void> => {
-  await seedDemoData();
-  const userId = currentUserId(req);
-  if (!userId) {
-    res.status(400).json({ error: "X-User-Id header is required" });
-    return;
+  try {
+    await seedDemoData();
+    const userId = res.locals.userId as string;
+    const { documents, users } = await getWorkspaceRows(userId);
+    res.json(
+      ListDocumentsResponse.parse(
+        documents.map((document) => toListItem(document, userId, users)),
+      ),
+    );
+  } catch (err) {
+    console.error("[GET /documents]", err);
+    res.status(500).json({ error: "Internal server error" });
   }
-  const { documents, users } = await getWorkspaceRows(userId);
-  res.json(
-    ListDocumentsResponse.parse(
-      documents.map((document) => toListItem(document, userId, users)),
-    ),
-  );
 });
 
 router.post("/documents", async (req, res): Promise<void> => {
-  await seedDemoData();
-  const userId = currentUserId(req);
-  if (!userId) {
-    res.status(400).json({ error: "X-User-Id header is required" });
-    return;
+  try {
+    await seedDemoData();
+    const userId = res.locals.userId as string;
+    const user = (await getUsersById([userId])).get(userId);
+    if (!user) {
+      res.status(400).json({ error: "Unknown user" });
+      return;
+    }
+    const parsed = CreateDocumentBody.safeParse(req.body);
+    if (!parsed.success) {
+      res.status(400).json({ error: parsed.error.message });
+      return;
+    }
+    const now = new Date();
+    const [document] = await db
+      .insert(documentsTable)
+      .values({
+        id: createId(),
+        title: parsed.data.title.trim(),
+        content: parsed.data.content,
+        ownerId: userId,
+        wordCount: wordCount(parsed.data.content),
+        createdAt: now,
+        updatedAt: now,
+      })
+      .returning();
+    res.status(201).json(
+      CreateDocumentResponse.parse({
+        ...toDetail(document, userId, new Map([[user.id, user]]), []),
+      }),
+    );
+  } catch (err) {
+    console.error("[POST /documents]", err);
+    res.status(500).json({ error: "Internal server error" });
   }
-  const user = (await getUsersById([userId])).get(userId);
-  if (!user) {
-    res.status(400).json({ error: "Unknown user" });
-    return;
-  }
-  const parsed = CreateDocumentBody.safeParse(req.body);
-  if (!parsed.success) {
-    res.status(400).json({ error: parsed.error.message });
-    return;
-  }
-  const now = new Date();
-  const [document] = await db
-    .insert(documentsTable)
-    .values({
-      id: createId(),
-      title: parsed.data.title.trim(),
-      content: parsed.data.content,
-      ownerId: userId,
-      wordCount: wordCount(parsed.data.content),
-      createdAt: now,
-      updatedAt: now,
-    })
-    .returning();
-  res.status(201).json(
-    CreateDocumentResponse.parse({
-      ...toDetail(document, userId, new Map([[user.id, user]]), []),
-    }),
-  );
 });
 
 router.post("/documents/import", async (req, res): Promise<void> => {
-  await seedDemoData();
-  const userId = currentUserId(req);
-  if (!userId) {
-    res.status(400).json({ error: "X-User-Id header is required" });
-    return;
+  try {
+    await seedDemoData();
+    const userId = res.locals.userId as string;
+    const user = (await getUsersById([userId])).get(userId);
+    if (!user) {
+      res.status(400).json({ error: "Unknown user" });
+      return;
+    }
+    const parsed = ImportDocumentBody.safeParse(req.body);
+    if (!parsed.success) {
+      res.status(400).json({ error: parsed.error.message });
+      return;
+    }
+    const extension = parsed.data.filename.toLowerCase().split(".").pop();
+    if (extension !== "txt" && extension !== "md" && extension !== "markdown") {
+      res.status(400).json({ error: "Only .txt and .md files are supported." });
+      return;
+    }
+    const now = new Date();
+    // Plain text is treated as markdown (line breaks → paragraphs, etc.)
+    const html = markdownToHtml(parsed.data.content);
+    const [document] = await db
+      .insert(documentsTable)
+      .values({
+        id: createId(),
+        title: parsed.data.filename.replace(/\.(markdown|md|txt)$/i, "") || "Imported document",
+        content: html,
+        ownerId: userId,
+        wordCount: wordCount(html),
+        createdAt: now,
+        updatedAt: now,
+      })
+      .returning();
+    res.status(201).json(
+      ImportDocumentResponse.parse({
+        ...toDetail(document, userId, new Map([[user.id, user]]), []),
+      }),
+    );
+  } catch (err) {
+    console.error("[POST /documents/import]", err);
+    res.status(500).json({ error: "Internal server error" });
   }
-  const user = (await getUsersById([userId])).get(userId);
-  if (!user) {
-    res.status(400).json({ error: "Unknown user" });
-    return;
-  }
-  const parsed = ImportDocumentBody.safeParse(req.body);
-  if (!parsed.success) {
-    res.status(400).json({ error: parsed.error.message });
-    return;
-  }
-  const extension = parsed.data.filename.toLowerCase().split(".").pop();
-  if (extension !== "txt" && extension !== "md" && extension !== "markdown") {
-    res.status(400).json({ error: "Only .txt and .md files are supported." });
-    return;
-  }
-  const now = new Date();
-  const html = extension === "txt" ? markdownToHtml(parsed.data.content) : markdownToHtml(parsed.data.content);
-  const [document] = await db
-    .insert(documentsTable)
-    .values({
-      id: createId(),
-      title: parsed.data.filename.replace(/\.(markdown|md|txt)$/i, "") || "Imported document",
-      content: html,
-      ownerId: userId,
-      wordCount: wordCount(html),
-      createdAt: now,
-      updatedAt: now,
-    })
-    .returning();
-  res.status(201).json(
-    ImportDocumentResponse.parse({
-      ...toDetail(document, userId, new Map([[user.id, user]]), []),
-    }),
-  );
 });
 
 router.get("/documents/:id", async (req, res): Promise<void> => {
-  await seedDemoData();
-  const userId = currentUserId(req);
-  if (!userId) {
-    res.status(400).json({ error: "X-User-Id header is required" });
-    return;
+  try {
+    await seedDemoData();
+    const userId = res.locals.userId as string;
+    const params = GetDocumentParams.safeParse(req.params);
+    if (!params.success) {
+      res.status(400).json({ error: params.error.message });
+      return;
+    }
+    const { documents, shares, users } = await getWorkspaceRows(userId);
+    const document = documents.find((item) => item.id === params.data.id);
+    if (!document) {
+      res.status(404).json({ error: "Document not found or inaccessible" });
+      return;
+    }
+    res.json(GetDocumentResponse.parse(toDetail(document, userId, users, shares)));
+  } catch (err) {
+    console.error("[GET /documents/:id]", err);
+    res.status(500).json({ error: "Internal server error" });
   }
-  const params = GetDocumentParams.safeParse(req.params);
-  if (!params.success) {
-    res.status(400).json({ error: params.error.message });
-    return;
-  }
-  const { documents, shares, users } = await getWorkspaceRows(userId);
-  const document = documents.find((item) => item.id === params.data.id);
-  if (!document) {
-    res.status(404).json({ error: "Document not found or inaccessible" });
-    return;
-  }
-  res.json(GetDocumentResponse.parse(toDetail(document, userId, users, shares)));
 });
 
 router.patch("/documents/:id", async (req, res): Promise<void> => {
-  await seedDemoData();
-  const userId = currentUserId(req);
-  if (!userId) {
-    res.status(400).json({ error: "X-User-Id header is required" });
-    return;
+  try {
+    await seedDemoData();
+    const userId = res.locals.userId as string;
+    const params = UpdateDocumentParams.safeParse(req.params);
+    if (!params.success) {
+      res.status(400).json({ error: params.error.message });
+      return;
+    }
+    const parsed = UpdateDocumentBody.safeParse(req.body);
+    if (!parsed.success) {
+      res.status(400).json({ error: parsed.error.message });
+      return;
+    }
+    const { documents, shares, users } = await getWorkspaceRows(userId);
+    const existing = documents.find((item) => item.id === params.data.id);
+    if (!existing) {
+      res.status(404).json({ error: "Document not found or inaccessible" });
+      return;
+    }
+    const [document] = await db
+      .update(documentsTable)
+      .set({
+        ...(parsed.data.title !== undefined && { title: parsed.data.title.trim() }),
+        ...(parsed.data.content !== undefined && {
+          content: parsed.data.content,
+          wordCount: wordCount(parsed.data.content),
+        }),
+        updatedAt: new Date(),
+      })
+      .where(eq(documentsTable.id, existing.id))
+      .returning();
+    res.json(UpdateDocumentResponse.parse(toDetail(document, userId, users, shares)));
+  } catch (err) {
+    console.error("[PATCH /documents/:id]", err);
+    res.status(500).json({ error: "Internal server error" });
   }
-  const params = UpdateDocumentParams.safeParse(req.params);
-  if (!params.success) {
-    res.status(400).json({ error: params.error.message });
-    return;
-  }
-  const parsed = UpdateDocumentBody.safeParse(req.body);
-  if (!parsed.success) {
-    res.status(400).json({ error: parsed.error.message });
-    return;
-  }
-  const { documents, shares, users } = await getWorkspaceRows(userId);
-  const existing = documents.find((item) => item.id === params.data.id);
-  if (!existing) {
-    res.status(404).json({ error: "Document not found or inaccessible" });
-    return;
-  }
-  const [document] = await db
-    .update(documentsTable)
-    .set({
-      ...(parsed.data.title !== undefined && { title: parsed.data.title.trim() }),
-      ...(parsed.data.content !== undefined && {
-        content: parsed.data.content,
-        wordCount: wordCount(parsed.data.content),
-      }),
-      updatedAt: new Date(),
-    })
-    .where(eq(documentsTable.id, existing.id))
-    .returning();
-  res.json(UpdateDocumentResponse.parse(toDetail(document, userId, users, shares)));
 });
 
 router.post("/documents/:id/share", async (req, res): Promise<void> => {
-  await seedDemoData();
-  const ownerId = currentUserId(req);
-  if (!ownerId) {
-    res.status(400).json({ error: "X-User-Id header is required" });
-    return;
+  try {
+    await seedDemoData();
+    const ownerId = res.locals.userId as string;
+    const params = ShareDocumentParams.safeParse(req.params);
+    const parsed = ShareDocumentBody.safeParse(req.body);
+    if (!params.success || !parsed.success) {
+      res.status(400).json({ error: "A valid document and user are required." });
+      return;
+    }
+    const { documents, shares, users } = await getWorkspaceRows(ownerId);
+    const document = documents.find((item) => item.id === params.data.id);
+    if (!document || document.ownerId !== ownerId) {
+      res.status(404).json({ error: "Document not found or you are not the owner." });
+      return;
+    }
+    const target = (await getUsersById([parsed.data.userId])).get(parsed.data.userId);
+    if (!target || target.id === ownerId) {
+      res.status(400).json({ error: "Choose a different seeded teammate." });
+      return;
+    }
+    const alreadyShared = shares.some(
+      (share) => share.documentId === document.id && share.userId === target.id,
+    );
+    if (!alreadyShared) {
+      await db.insert(documentSharesTable).values({
+        id: createId(),
+        documentId: document.id,
+        userId: target.id,
+      });
+    }
+    const refreshed = await getWorkspaceRows(ownerId);
+    const updated = refreshed.documents.find((item) => item.id === document.id);
+    if (!updated) {
+      res.status(404).json({ error: "Document not found after sharing." });
+      return;
+    }
+    res.json(
+      ShareDocumentResponse.parse(
+        toDetail(updated, ownerId, refreshed.users, refreshed.shares),
+      ),
+    );
+  } catch (err) {
+    console.error("[POST /documents/:id/share]", err);
+    res.status(500).json({ error: "Internal server error" });
   }
-  const params = ShareDocumentParams.safeParse(req.params);
-  const parsed = ShareDocumentBody.safeParse(req.body);
-  if (!params.success || !parsed.success) {
-    res.status(400).json({ error: "A valid document and user are required." });
-    return;
-  }
-  const { documents, shares, users } = await getWorkspaceRows(ownerId);
-  const document = documents.find((item) => item.id === params.data.id);
-  if (!document || document.ownerId !== ownerId) {
-    res.status(404).json({ error: "Document not found or you are not the owner." });
-    return;
-  }
-  const target = (await getUsersById([parsed.data.userId])).get(parsed.data.userId);
-  if (!target || target.id === ownerId) {
-    res.status(400).json({ error: "Choose a different seeded teammate." });
-    return;
-  }
-  const alreadyShared = shares.some(
-    (share) => share.documentId === document.id && share.userId === target.id,
-  );
-  if (!alreadyShared) {
-    await db.insert(documentSharesTable).values({
-      id: createId(),
-      documentId: document.id,
-      userId: target.id,
-    });
-  }
-  const refreshed = await getWorkspaceRows(ownerId);
-  const updated = refreshed.documents.find((item) => item.id === document.id);
-  if (!updated) {
-    res.status(404).json({ error: "Document not found after sharing." });
-    return;
-  }
-  res.json(
-    ShareDocumentResponse.parse(
-      toDetail(updated, ownerId, refreshed.users, refreshed.shares),
-    ),
-  );
 });
 
 router.get("/dashboard", async (req, res): Promise<void> => {
-  await seedDemoData();
-  const userId = currentUserId(req);
-  if (!userId) {
-    res.status(400).json({ error: "X-User-Id header is required" });
-    return;
+  try {
+    await seedDemoData();
+    const userId = res.locals.userId as string;
+    const { documents, users } = await getWorkspaceRows(userId);
+    const owned = documents.filter((document) => document.ownerId === userId);
+    const shared = documents.filter((document) => document.ownerId !== userId);
+    res.json(
+      GetDashboardResponse.parse({
+        ownedCount: owned.length,
+        sharedCount: shared.length,
+        totalWords: documents.reduce((sum, document) => sum + document.wordCount, 0),
+        recent: documents.slice(0, 5).map((document) => toListItem(document, userId, users)),
+      }),
+    );
+  } catch (err) {
+    console.error("[GET /dashboard]", err);
+    res.status(500).json({ error: "Internal server error" });
   }
-  const { documents, users } = await getWorkspaceRows(userId);
-  const owned = documents.filter((document) => document.ownerId === userId);
-  const shared = documents.filter((document) => document.ownerId !== userId);
-  res.json(
-    GetDashboardResponse.parse({
-      ownedCount: owned.length,
-      sharedCount: shared.length,
-      totalWords: documents.reduce((sum, document) => sum + document.wordCount, 0),
-      recent: documents.slice(0, 5).map((document) => toListItem(document, userId, users)),
-    }),
-  );
 });
 
 export default router;

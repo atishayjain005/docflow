@@ -6,21 +6,21 @@ const demoUsers = [
   {
     id: "maya",
     name: "Maya Chen",
-    email: "maya@ajaia.test",
+    email: "maya@docflow.test",
     initials: "MC",
     accent: "#e3a36f",
   },
   {
     id: "sam",
     name: "Sam Rivera",
-    email: "sam@ajaia.test",
+    email: "sam@docflow.test",
     initials: "SR",
     accent: "#7f9cf5",
   },
   {
     id: "noor",
     name: "Noor Patel",
-    email: "noor@ajaia.test",
+    email: "noor@docflow.test",
     initials: "NP",
     accent: "#7bc7a5",
   },
@@ -41,11 +41,11 @@ export async function seedDemoData(): Promise<void> {
 
   if (existing.length === 0) {
     await db.insert(documentsTable).values({
-      id: "welcome-to-ajaia",
-      title: "Welcome to Ajaia Docs",
+      id: "welcome-to-docflow",
+      title: "Welcome to DocFlow",
       ownerId: "maya",
       content:
-        "<h1>Welcome to Ajaia Docs</h1><p>A focused space for work that moves with your team.</p><p>Try editing this document, then share it with Sam or Noor.</p><h2>What to try</h2><ul><li>Use the formatting toolbar to shape a thought.</li><li>Import a Markdown file from the workspace.</li><li>Share this document with a teammate.</li></ul>",
+        "<h1>Welcome to DocFlow</h1><p>A focused space for work that moves with your team.</p><p>Try editing this document, then share it with Sam or Noor.</p><h2>What to try</h2><ul><li>Use the formatting toolbar to shape a thought.</li><li>Import a Markdown file from the workspace.</li><li>Share this document with a teammate.</li></ul>",
       wordCount: 39,
     });
 

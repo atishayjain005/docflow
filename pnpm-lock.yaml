@@ -168,7 +168,7 @@ importers:
         specifier: ~5.9.3
         version: 5.9.3
 
-  artifacts/ajaia-docs:
+  artifacts/docflow:
     devDependencies:
       '@hookform/resolvers':
         specifier: ^3.10.0
@@ -360,7 +360,7 @@ importers:
         specifier: 'catalog:'
         version: 3.25.76
 
-  artifacts/ajaia-docs-video:
+  artifacts/docflow-video:
     devDependencies:
       '@react-spring/web':
         specifier: ^10.0.3

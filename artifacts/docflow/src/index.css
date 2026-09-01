@@ -440,23 +440,23 @@
   ::selection { background: hsl(var(--accent) / 0.45); color: hsl(var(--foreground)); }
 }
 
-@keyframes ajaia-rise {
+@keyframes docflow-rise {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
-@keyframes ajaia-pulse {
+@keyframes docflow-pulse {
   0%, 100% { opacity: .45; }
   50% { opacity: 1; }
 }
-@keyframes ajaia-spin { to { transform: rotate(360deg); } }
+@keyframes docflow-spin { to { transform: rotate(360deg); } }
 
-.ajaia-rise { animation: ajaia-rise .55s cubic-bezier(.2,.8,.2,1) both; }
-.ajaia-delay-1 { animation-delay: .06s; }
-.ajaia-delay-2 { animation-delay: .12s; }
-.ajaia-delay-3 { animation-delay: .18s; }
-.ajaia-delay-4 { animation-delay: .24s; }
-.ajaia-skeleton { animation: ajaia-pulse 1.5s ease-in-out infinite; }
-.ajaia-spinner { animation: ajaia-spin .8s linear infinite; }
+.docflow-rise { animation: docflow-rise .55s cubic-bezier(.2,.8,.2,1) both; }
+.docflow-delay-1 { animation-delay: .06s; }
+.docflow-delay-2 { animation-delay: .12s; }
+.docflow-delay-3 { animation-delay: .18s; }
+.docflow-delay-4 { animation-delay: .24s; }
+.docflow-skeleton { animation: docflow-pulse 1.5s ease-in-out infinite; }
+.docflow-spinner { animation: docflow-spin .8s linear infinite; }
 .editor-surface:focus { outline: none; }
 .editor-surface h1, .editor-surface h2, .editor-surface h3 { color: hsl(var(--foreground)); font-weight: 800; letter-spacing: -.03em; }
 .editor-surface h1 { font-size: 2.1rem; line-height: 1.12; margin: 1.6rem 0 .7rem; }

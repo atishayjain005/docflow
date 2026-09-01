@@ -2,7 +2,7 @@
 
 ## Product slice
 
-Ajaia Docs is intentionally a small shared workspace rather than a Google Docs clone. The core loop is: choose a seeded member, create or import a document, edit it in a familiar browser surface, save it, and share it with another teammate.
+DocFlow is intentionally a small shared workspace rather than a Google Docs clone. The core loop is: choose a seeded member, create or import a document, edit it in a familiar browser surface, save it, and share it with another teammate.
 
 ## Decisions
 
@@ -14,7 +14,7 @@ Ajaia Docs is intentionally a small shared workspace rather than a Google Docs c
 
 ## Data model
 
-`ajaia_users` stores the reviewer identities. `ajaia_documents` stores title, HTML content, owner, timestamps, and derived word count. `ajaia_document_shares` is a unique `(document_id, user_id)` grant table with cascade deletion from documents.
+`docflow_users` stores the reviewer identities. `docflow_documents` stores title, HTML content, owner, timestamps, and derived word count. `docflow_document_shares` is a unique `(document_id, user_id)` grant table with cascade deletion from documents.
 
 The API contract lives in `lib/api-spec/openapi.yaml`; generated React Query hooks and Zod schemas are the shared interface between the frontend and API.
 

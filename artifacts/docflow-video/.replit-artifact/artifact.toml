@@ -1,0 +1,29 @@
+kind = "video"
+previewPath = "/docflow-video/"
+title = "DocFlow — Product Story"
+description = "A square animated product story showing how DocFlow helps teams create, edit, import, and share focused collaborative documents."
+version = "1.0.0"
+id = "artifacts/docflow-video"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/docflow-video/" ]
+localPort = 22064
+
+[services.development]
+run = "pnpm --filter @workspace/docflow-video run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/docflow-video", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/docflow-video/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "22064"
+BASE_PATH = "/docflow-video/"
+videoAspectRatio = "1:1"

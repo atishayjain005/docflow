@@ -33,7 +33,7 @@ export function Scene2() {
           transition={{ delay: .5, duration: 1, ease: [0.16, 1, .3, 1] }}
         >
           <MediaFrame fit="cover" position="top">
-            <img src={`${BASE}screenshots/ajaia-docs-workspace.jpg`} alt="Ajaia Docs workspace document library" />
+            <img src={`${BASE}screenshots/docflow-workspace.jpg`} alt="DocFlow workspace document library" />
           </MediaFrame>
           <motion.div style={{ position: 'absolute', inset: 0, border: '1.2vmin solid rgba(255,171,88,.82)', pointerEvents: 'none' }} initial={{ clipPath: 'inset(0 100% 0 0)' }} animate={{ clipPath: 'inset(0 0 0 0)' }} transition={{ delay: 1.15, duration: .8 }} />
         </motion.div>
