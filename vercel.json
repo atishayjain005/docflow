@@ -9,7 +9,8 @@
   ],
   "functions": {
     "api/index.mjs": {
-      "maxDuration": 30
+      "maxDuration": 30,
+      "includeFiles": "artifacts/api-server/dist/**"
     }
   }
 }
