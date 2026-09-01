@@ -1,5 +1,5 @@
 import { drizzle } from "drizzle-orm/node-postgres";
-import pg from "pg";
+import pg, { type PoolConfig } from "pg";
 import * as schema from "./schema";
 
 const { Pool } = pg;
@@ -10,7 +10,23 @@ if (!process.env.DATABASE_URL) {
   );
 }
 
-export const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+function createPoolConfig(connectionString: string): PoolConfig {
+  const url = new URL(connectionString);
+  const sslMode = url.searchParams.get("sslmode");
+
+  if (!sslMode) {
+    return { connectionString };
+  }
+
+  url.searchParams.delete("sslmode");
+
+  return {
+    connectionString: url.toString(),
+    ssl: sslMode === "disable" ? false : { rejectUnauthorized: true },
+  };
+}
+
+export const pool = new Pool(createPoolConfig(process.env.DATABASE_URL));
 export const db = drizzle(pool, { schema });
 
 export * from "./schema";
