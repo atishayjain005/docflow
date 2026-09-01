@@ -133,11 +133,11 @@ The polished UI focuses on:
 
 ## 8. Walkthrough Artifact
 
-The existing product story artifact was renamed to `docflow-video` and wired into the Vercel build. It is deployed under the same production domain at:
+The walkthrough artifact is now a dedicated video page backed by a longer MP4 product tour. It is deployed under the same production domain at:
 
 https://docflow-xi-eight.vercel.app/walkthrough/
 
-This walkthrough page presents the product story and submission-ready flow without requiring a separate hosting service.
+This walkthrough page opens the video directly and covers the workspace, blank document creation, import flow, editor typography, sharing, member switching, route filters, and submission handoff.
 
 ## 9. Validation
 

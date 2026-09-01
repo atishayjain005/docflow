@@ -1,0 +1,13 @@
+[0:v]scale=1280:720,setsar=1,fps=30,format=yuv420p[v0];
+[1:v]scale=1280:720,setsar=1,fps=30,format=yuv420p[v1];
+[2:v]scale=1280:720,setsar=1,fps=30,format=yuv420p[v2];
+[3:v]scale=1280:720,setsar=1,fps=30,format=yuv420p[v3];
+[4:v]scale=1280:720,setsar=1,fps=30,format=yuv420p[v4];
+[5:v]scale=1280:720,setsar=1,fps=30,format=yuv420p[v5];
+[6:v]scale=1280:720,setsar=1,fps=30,format=yuv420p[v6];
+[7:v]scale=1280:720,setsar=1,fps=30,format=yuv420p[v7];
+[8:v]scale=1280:720,setsar=1,fps=30,format=yuv420p[v8];
+[9:v]scale=1280:720,setsar=1,fps=30,format=yuv420p[v9];
+[10:v]scale=1280:720,setsar=1,fps=30,format=yuv420p[v10];
+[11:v]scale=1280:720,setsar=1,fps=30,format=yuv420p[v11];
+[v0][v1][v2][v3][v4][v5][v6][v7][v8][v9][v10][v11]concat=n=12:v=1:a=0[outv]

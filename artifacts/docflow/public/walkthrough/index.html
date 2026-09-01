@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DocFlow Walkthrough Video</title>
+    <meta
+      name="description"
+      content="A full DocFlow product walkthrough covering workspace, creation, import, rich typography, editing, sharing, and reviewer handoff."
+    />
+    <style>
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        background:
+          radial-gradient(circle at 80% 15%, rgb(39 135 127 / 0.18), transparent 28rem),
+          #f7f3eb;
+        color: #102a2a;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+      }
+
+      main {
+        width: min(1120px, calc(100vw - 32px));
+        padding: 42px 0;
+      }
+
+      h1 {
+        margin: 0 0 10px;
+        font-size: clamp(34px, 5vw, 64px);
+        line-height: 0.98;
+        letter-spacing: -0.06em;
+      }
+
+      p {
+        margin: 0 0 24px;
+        max-width: 760px;
+        color: rgb(16 42 42 / 0.68);
+        font-size: 18px;
+        line-height: 1.5;
+      }
+
+      video {
+        width: 100%;
+        border: 1px solid rgb(16 42 42 / 0.12);
+        border-radius: 28px;
+        background: #102a2a;
+        box-shadow: 0 30px 90px rgb(16 42 42 / 0.18);
+      }
+
+      a {
+        color: #27877f;
+        font-weight: 800;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>DocFlow walkthrough video</h1>
+      <p>
+        This longer walkthrough covers the workspace, blank document creation,
+        import flow, editor typography, sharing, member switching, route
+        filters, and submission handoff.
+      </p>
+      <video controls preload="metadata" poster="/video-frames/00-title-card.png">
+        <source src="/walkthrough-video.mp4" type="video/mp4" />
+        <a href="/walkthrough-video.mp4">Open the walkthrough video</a>
+      </video>
+    </main>
+  </body>
+</html>

@@ -36,7 +36,9 @@
       }
 
       .title,
-      .outro {
+      .outro,
+      .feature,
+      .typography {
         padding: 72px;
         text-align: center;
       }
@@ -46,6 +48,15 @@
           radial-gradient(circle at 25% 20%, rgb(244 163 64 / 0.3), transparent 26rem),
           linear-gradient(135deg, #102a2a, #143f3c);
         color: white;
+      }
+
+      .feature,
+      .typography,
+      .outro {
+        background:
+          radial-gradient(circle at 75% 20%, rgb(39 135 127 / 0.18), transparent 28rem),
+          var(--paper);
+        color: var(--ink);
       }
 
       .eyebrow {
@@ -58,18 +69,24 @@
 
       h1 {
         margin: 18px auto 20px;
-        max-width: 900px;
-        font-size: clamp(56px, 8vw, 92px);
+        max-width: 960px;
+        font-size: clamp(54px, 7.3vw, 88px);
         line-height: 0.95;
         letter-spacing: -0.07em;
       }
 
       p {
         margin: 0 auto;
-        max-width: 860px;
+        max-width: 890px;
         color: rgb(255 255 255 / 0.82);
-        font-size: clamp(24px, 3vw, 36px);
+        font-size: clamp(23px, 2.8vw, 34px);
         line-height: 1.25;
+      }
+
+      .feature p,
+      .typography p,
+      .outro p {
+        color: rgb(16 42 42 / 0.72);
       }
 
       .shot {
@@ -106,15 +123,71 @@
         letter-spacing: -0.035em;
       }
 
-      .outro {
-        background:
-          radial-gradient(circle at 75% 20%, rgb(39 135 127 / 0.18), transparent 28rem),
-          var(--paper);
-        color: var(--ink);
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+        margin: 42px auto 0;
+        max-width: 980px;
+        text-align: left;
       }
 
-      .outro p {
-        color: rgb(16 42 42 / 0.72);
+      .feature-card {
+        min-height: 148px;
+        border: 1px solid rgb(16 42 42 / 0.1);
+        border-radius: 24px;
+        background: rgb(255 255 255 / 0.76);
+        box-shadow: 0 18px 52px rgb(16 42 42 / 0.08);
+        padding: 22px;
+      }
+
+      .feature-card strong {
+        display: block;
+        margin-bottom: 10px;
+        color: var(--teal);
+        font-size: 20px;
+      }
+
+      .feature-card span {
+        color: rgb(16 42 42 / 0.68);
+        font-size: 17px;
+        line-height: 1.35;
+      }
+
+      .type-sample {
+        margin: 34px auto 0;
+        max-width: 760px;
+        border-radius: 28px;
+        background: white;
+        box-shadow: 0 28px 90px rgb(16 42 42 / 0.12);
+        padding: 46px 58px;
+        text-align: left;
+      }
+
+      .type-sample h2 {
+        margin: 0 0 16px;
+        color: var(--ink);
+        font-size: 46px;
+        letter-spacing: -0.06em;
+      }
+
+      .type-sample p,
+      .type-sample li {
+        color: rgb(16 42 42 / 0.76);
+        font-size: 22px;
+        line-height: 1.55;
+      }
+
+      .type-sample a {
+        color: var(--teal);
+        text-decoration: underline;
+      }
+
+      .type-sample code {
+        border-radius: 8px;
+        background: rgb(39 135 127 / 0.1);
+        color: var(--teal);
+        padding: 3px 7px;
       }
 
       .pill {
@@ -135,15 +208,38 @@
       const scenes = {
         title: {
           type: "title",
-          eyebrow: "Fresh walkthrough",
-          headline: "DocFlow product walkthrough",
-          copy: "Collaborative documents, rich editing, imports, and sharing in one focused workspace.",
+          eyebrow: "Full walkthrough",
+          headline: "DocFlow feature walkthrough",
+          copy: "A longer product tour covering workspace navigation, creation, import, rich typography, editing, sharing, and reviewer handoff.",
+        },
+        overview: {
+          type: "feature",
+          eyebrow: "What the app covers",
+          headline: "All core flows in one focused workspace",
+          copy: "DocFlow is a scoped collaborative document workspace for seeded reviewers.",
+          cards: [
+            ["Workspace", "Dashboard metrics, document library, search, and route filters."],
+            ["Authoring", "Create blank docs, import Markdown or text, edit rich content, and save."],
+            ["Collaboration", "Switch seeded teammates, share owned docs, and verify access boundaries."],
+          ],
         },
         workspace: {
           type: "shot",
           image: "01-workspace.png",
           eyebrow: "Workspace",
-          caption: "Start from seeded teammates, a document library, and quick activity stats.",
+          caption: "Start from seeded teammates, a document library, search, filters, and quick activity stats.",
+        },
+        create: {
+          type: "shot",
+          image: "04-create.png",
+          eyebrow: "Create",
+          caption: "Open the blank-document flow, name a document, and start from a clean editable page.",
+        },
+        import: {
+          type: "shot",
+          image: "05-import.png",
+          eyebrow: "Import",
+          caption: "Bring in .txt, .md, or .markdown files and convert Markdown into editable rich content.",
         },
         editor: {
           type: "shot",
@@ -151,18 +247,47 @@
           eyebrow: "Editor",
           caption: "Open a document, shape content with the rich toolbar, and save changes.",
         },
+        typography: {
+          type: "typography",
+          eyebrow: "Typography",
+          headline: "Readable structure stays editable",
+          copy: "The writing surface supports common document typography.",
+        },
         share: {
           type: "shot",
           image: "03-share.png",
           eyebrow: "Sharing",
           caption: "Bring a teammate into the document with the owner-only share flow.",
         },
+        members: {
+          type: "shot",
+          image: "07-member-switcher.png",
+          eyebrow: "Review identities",
+          caption: "Use the member switcher to test Maya, Sam, and Noor without a password login.",
+        },
+        filters: {
+          type: "shot",
+          image: "06-shared-filter.png",
+          eyebrow: "Route filters",
+          caption: "My documents and Shared with me keep the reviewer focused on ownership and access.",
+        },
+        handoff: {
+          type: "feature",
+          eyebrow: "Validation",
+          headline: "The submission includes the proof points",
+          copy: "The reviewer can run the app, inspect the API boundary, and repeat the smoke test.",
+          cards: [
+            ["API boundary", "PostgreSQL, Drizzle schema, Express routes, and generated OpenAPI hooks."],
+            ["Smoke test", "Creates, saves, shares, and verifies document visibility through the API."],
+            ["Scope notes", "Real auth, realtime editing, comments, versions, and DOCX are documented cuts."],
+          ],
+        },
         outro: {
           type: "outro",
-          eyebrow: "Submitted scope",
+          eyebrow: "Live handoff",
           headline: "Built, tested, and deployed",
-          copy: "PostgreSQL + Drizzle API, generated hooks, smoke-tested flows, documented tradeoffs, and a live Vercel demo.",
-          link: "docflow-xi-eight.vercel.app",
+          copy: "Use the walkthrough page for the video and the live app for the interactive review.",
+          link: "docflow-xi-eight.vercel.app/walkthrough/",
         },
       };
 
@@ -176,6 +301,35 @@
           <div class="caption">
             <strong>${scene.eyebrow}</strong>
             <span>${scene.caption}</span>
+          </div>
+        `;
+      } else if (scene.type === "feature") {
+        stage.classList.add(scene.type);
+        stage.innerHTML = `
+          <div>
+            <div class="eyebrow">${scene.eyebrow}</div>
+            <h1>${scene.headline}</h1>
+            <p>${scene.copy}</p>
+            <div class="feature-grid">
+              ${scene.cards.map(([title, copy]) => `<div class="feature-card"><strong>${title}</strong><span>${copy}</span></div>`).join("")}
+            </div>
+          </div>
+        `;
+      } else if (scene.type === "typography") {
+        stage.classList.add(scene.type);
+        stage.innerHTML = `
+          <div>
+            <div class="eyebrow">${scene.eyebrow}</div>
+            <h1>${scene.headline}</h1>
+            <p>${scene.copy}</p>
+            <div class="type-sample">
+              <h2>Planning notes</h2>
+              <p><strong>Bold decisions</strong>, <em>gentle emphasis</em>, <u>underlined details</u>, <s>removed drafts</s>, <a>shared links</a>, and <code>code style</code>.</p>
+              <ul>
+                <li>Bulleted and numbered lists keep reviews scannable.</li>
+                <li>Imported Markdown becomes editable rich text.</li>
+              </ul>
+            </div>
           </div>
         `;
       } else {
