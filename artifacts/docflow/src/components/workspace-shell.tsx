@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Link, useLocation } from 'wouter';
 import { useQueryClient } from '@tanstack/react-query';
 import { ChevronDown, FileText, FolderOpen, Home, Menu, Plus, Search, Sparkles, X } from 'lucide-react';
@@ -73,14 +73,37 @@ function Avatar({ user, small = false }: { user: Pick<User, 'initials' | 'accent
 export function UserSwitcher() {
   const { currentUser, users, switchUser } = useWorkspace();
   const [open, setOpen] = useState(false);
+  const switcherRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (switcherRef.current && !switcherRef.current.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setOpen(false);
+    };
+
+    document.addEventListener('pointerdown', handlePointerDown);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [open]);
 
   return (
-    <div className="relative">
+    <div ref={switcherRef} className="relative">
       <button
         type="button"
         data-testid="button-user-switcher"
+        aria-expanded={open}
+        aria-haspopup="menu"
         onClick={() => setOpen((value) => !value)}
-        className="flex w-full items-center gap-3 rounded-xl border border-[hsl(var(--sidebar-border))] bg-[hsl(var(--sidebar-accent))] px-3 py-2.5 text-left transition hover:bg-[hsl(var(--sidebar-accent)/.8)] active:scale-[0.99]"
+        className="flex w-full cursor-pointer items-center gap-3 rounded-xl border border-[hsl(var(--sidebar-border))] bg-[hsl(var(--sidebar-accent))] px-3 py-2.5 text-left transition hover:bg-[hsl(var(--sidebar-accent)/.8)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent)/.5)] active:scale-[0.99]"
       >
         <Avatar user={currentUser} />
         <span className="min-w-0 flex-1">
@@ -90,7 +113,7 @@ export function UserSwitcher() {
         <ChevronDown className={`h-4 w-4 transition-transform ${open ? 'rotate-180' : ''}`} />
       </button>
       {open && (
-        <div data-testid="menu-user-switcher" className="absolute bottom-[calc(100%+8px)] left-0 z-30 w-full overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--popover))] p-1.5 text-[hsl(var(--popover-foreground))] shadow-xl">
+        <div role="menu" data-testid="menu-user-switcher" className="absolute bottom-[calc(100%+8px)] left-0 z-30 w-full overflow-hidden rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--popover))] p-1.5 text-[hsl(var(--popover-foreground))] shadow-xl">
           <p className="px-2.5 py-2 text-[10px] font-bold uppercase tracking-[.16em] text-[hsl(var(--muted-foreground))]">Switch member</p>
           {users.map((user) => (
             <button
@@ -98,7 +121,9 @@ export function UserSwitcher() {
               data-testid={`button-switch-user-${user.id}`}
               key={user.id}
               onClick={() => { switchUser(user.id); setOpen(false); }}
-              className={`flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left transition hover:bg-[hsl(var(--muted))] active:scale-[0.99] ${user.id === currentUser.id ? 'bg-[hsl(var(--muted))] font-semibold text-[hsl(var(--primary))]' : ''}`}
+              role="menuitemradio"
+              aria-checked={user.id === currentUser.id}
+              className={`flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-2.5 py-2 text-left transition hover:bg-[hsl(var(--muted))] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--primary)/.25)] active:scale-[0.99] ${user.id === currentUser.id ? 'bg-[hsl(var(--muted))] font-semibold text-[hsl(var(--primary))]' : ''}`}
             >
               <Avatar user={user} small />
               <span className="min-w-0"><span className="block truncate text-xs font-semibold">{user.name}</span><span className="block truncate text-[10px] text-[hsl(var(--muted-foreground))]">{user.email}</span></span>
@@ -115,10 +140,12 @@ export function WorkspaceShell({ children }: { children: ReactNode }) {
   const [location] = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
   const closeMobile = () => setMobileOpen(false);
+  const [pathname, search = ''] = location.split('?');
+  const activeFilter = new URLSearchParams(search).get('filter');
   const navItems = [
-    { href: '/', label: 'Workspace', icon: Home },
-    { href: '/?filter=owned', label: 'My documents', icon: FileText },
-    { href: '/?filter=shared', label: 'Shared with me', icon: FolderOpen },
+    { href: '/', label: 'Workspace', icon: Home, filter: null },
+    { href: '/?filter=owned', label: 'My documents', icon: FileText, filter: 'owned' },
+    { href: '/?filter=shared', label: 'Shared with me', icon: FolderOpen, filter: 'shared' },
   ];
 
   return (
@@ -138,9 +165,9 @@ export function WorkspaceShell({ children }: { children: ReactNode }) {
         </div>
         <nav className="mt-8 space-y-1" aria-label="Workspace navigation">
           <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[.18em] text-[hsl(var(--sidebar-foreground)/.42)]">Your space</p>
-          {navItems.map(({ href, label, icon: Icon }) => {
-            const active = label === 'Workspace' ? location === '/' && !location.includes('filter') : location.includes(label === 'My documents' ? 'owned' : 'shared');
-            return <Link key={label} href={href} data-testid={`link-nav-${label.toLowerCase().replaceAll(' ', '-')}`} onClick={closeMobile} aria-current={active ? 'page' : undefined} className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition active:scale-[0.99] ${active ? 'bg-[hsl(var(--sidebar-accent))] font-semibold text-[hsl(var(--sidebar-foreground))] shadow-[inset_3px_0_0_hsl(var(--accent))]' : 'text-[hsl(var(--sidebar-foreground)/.66)] hover:bg-[hsl(var(--sidebar-accent)/.65)] hover:text-[hsl(var(--sidebar-foreground))]'}`}><Icon className="h-[17px] w-[17px]" />{label}</Link>;
+          {navItems.map(({ href, label, icon: Icon, filter }) => {
+            const active = pathname === '/' && activeFilter === filter;
+            return <Link key={label} href={href} data-testid={`link-nav-${label.toLowerCase().replaceAll(' ', '-')}`} onClick={closeMobile} aria-current={active ? 'page' : undefined} className={`flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent)/.35)] active:scale-[0.99] ${active ? 'bg-[hsl(var(--sidebar-accent))] font-semibold text-[hsl(var(--sidebar-foreground))] shadow-[inset_3px_0_0_hsl(var(--accent))]' : 'text-[hsl(var(--sidebar-foreground)/.66)] hover:bg-[hsl(var(--sidebar-accent)/.65)] hover:text-[hsl(var(--sidebar-foreground))]'}`}><Icon className="h-[17px] w-[17px]" />{label}</Link>;
           })}
         </nav>
         <div className="mt-auto">

@@ -35,3 +35,16 @@
 | Share submit | `/document/:id` | Button/mutation | Grants access | Pending, success, error, rapid click disabled | Verify lifecycle | Pending |
 | Document loading | `/document/:id` | Overlay/state | Skeleton | Noninteractive loading state | None | Pending |
 | Document error | `/document/:id` | State/link | Shows fallback and back link | Actionable back link | Verify lifecycle | Pending |
+
+## Fix Pass Report
+
+| Element | Location | Current Problem | Expected Behavior | Fix Applied | State Tested |
+| --- | --- | --- | --- | --- | --- |
+| Workspace nav | `components/workspace-shell.tsx` | Query-string routes could leave Workspace selected for filtered views. | Workspace, My documents, and Shared with me each show persistent selected state only for their route/filter. | Parsed `pathname` and `filter` explicitly and set `aria-current` from exact route state. | Default, selected, navigate away/back, hover, focus, pointer cursor. |
+| My documents nav | `components/workspace-shell.tsx` | Active state depended on substring matching. | Owned filter stays selected on `/?filter=owned`. | Shared exact filter-state nav logic. | Selected, hover, focus, pointer cursor. |
+| Shared with me nav | `components/workspace-shell.tsx` | Active state depended on substring matching and could drift. | Shared filter stays selected on `/?filter=shared`. | Shared exact filter-state nav logic. | Selected, hover, focus, pointer cursor. |
+| User switcher | `components/workspace-shell.tsx` | Custom popover only toggled by trigger/member click. | Outside click and Escape dismiss the menu; selected user remains visibly marked. | Added root ref, outside pointer listener, Escape listener, `aria-expanded`, `aria-haspopup`, and menu roles. | Click, outside click, Escape, selected, focus, hover. |
+| Editor kebab menu | `pages/document.tsx` | Kebab was a button that only changed save-status text. | Opens a positioned accessible menu; items are real actions or disabled. | Reused existing Radix dropdown menu. Added Copy link, Share document, and disabled Version history. | Open, outside click, Escape, focus, disabled item, action. |
+| Toolbar buttons | `pages/document.tsx` | Buttons executed commands but never reflected editor selection state. | Bold, Italic, Underline, Strike, Heading, Code, Lists, and Link reflect the current selection/caret where browser editing APIs expose it. | Added `ToolbarState`, selectionchange listener, `queryCommandState`/`queryCommandValue` checks, and `aria-pressed`. | Collapsed cursor, selection change, mouse/key update, active, focus. |
+| Dirty/save state | `pages/document.tsx` | Toolbar commands always marked dirty even when no content changed. | Dirty state is based on actual title/content diffs; save has saved/dirty/saving/error states. | Added saved snapshot diffing, explicit `SaveState`, save no-op guard, pending/error transitions, and post-save snapshot refresh. | Saved, dirty, saving, saved, error-ready retry, unchanged toolbar click. |
+| Share dialog | `pages/document.tsx` | Close button worked, but outside click/Escape dismissal was missing. | Dialog closes via close button, overlay click, or Escape without background actions. | Added Escape listener and overlay `onPointerDown` target check. | Click close, outside click, Escape, disabled submit. |
