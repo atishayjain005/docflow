@@ -1,4 +1,4 @@
-Walkthrough video URL: NOT RECORDED YET
+Walkthrough video URL: https://docflow-xi-eight.vercel.app/walkthrough/
 
 Recording checklist:
 1. Start as Maya and show the workspace, seeded documents, and member switcher.

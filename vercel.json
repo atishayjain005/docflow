@@ -5,6 +5,8 @@
   "outputDirectory": "artifacts/docflow/dist/public",
   "rewrites": [
     { "source": "/api/(.*)", "destination": "/api" },
+    { "source": "/walkthrough", "destination": "/walkthrough/index.html" },
+    { "source": "/walkthrough/(.*)", "destination": "/walkthrough/index.html" },
     { "source": "/((?!api/).*)", "destination": "/index.html" }
   ],
   "functions": {

@@ -4,6 +4,8 @@ A focused collaborative document workspace for small teams. Create and rename do
 
 **Live demo:** https://docflow-xi-eight.vercel.app
 
+**Product walkthrough:** https://docflow-xi-eight.vercel.app/walkthrough/
+
 ## Reviewer quick start
 
 1. Start the API and web services in two terminals:
@@ -55,6 +57,8 @@ Intentionally incomplete: real authentication, concurrent real-time editing, com
 ## Delivery notes
 
 - **Live deployment:** https://docflow-xi-eight.vercel.app
+- **Product walkthrough:** https://docflow-xi-eight.vercel.app/walkthrough/
+- Build process note: `BUILD_PROCESS.md`
 - Architecture rationale: `ARCHITECTURE.md`
 - AI workflow note: `AI_WORKFLOW.md`
 - Submission checklist: `SUBMISSION.md`
