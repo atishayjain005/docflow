@@ -7,6 +7,13 @@ if (!process.env.DATABASE_URL) {
   process.exit(1);
 }
 
+if (process.env.VERCEL === "1") {
+  console.log(
+    "Skipping drizzle-kit push during Vercel build to avoid non-interactive schema prompts. Run `pnpm --filter @workspace/db run push` when schema changes.",
+  );
+  process.exit(0);
+}
+
 const result = spawnSync(
   "pnpm",
   ["--filter", "@workspace/db", "run", "push"],

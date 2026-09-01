@@ -36,7 +36,7 @@ pnpm --filter @workspace/api-spec run codegen
 pnpm run typecheck
 ```
 
-The project uses PostgreSQL via `DATABASE_URL`. For local development, set `DATABASE_URL` in `.env.local`. On Vercel, provision Neon (or Vercel Postgres) and add `DATABASE_URL` to the project environment — the build runs `drizzle-kit push` to sync the schema. The API seeds three demo users and two starter documents on first request.
+The project uses PostgreSQL via `DATABASE_URL`. For local development, set `DATABASE_URL` in `.env.local`. On Vercel, provision Neon (or Vercel Postgres) and add `DATABASE_URL` to the project environment. Run `pnpm --filter @workspace/db run push` when schema changes need to be applied. The API seeds three demo users and two starter documents on first request.
 
 ## Automated validation
 
