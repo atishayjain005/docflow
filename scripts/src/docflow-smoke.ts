@@ -19,6 +19,11 @@ const users = (await request("/users")) as unknown as Array<{ id: string }>;
 assert.equal(users.length, 3, "seeded workspace should contain three demo users");
 assert.ok(users.some((user) => user.id === "maya"), "Maya should be available");
 
+const mayaDashboard = await request("/dashboard", {
+  headers: { "X-User-Id": "maya" },
+});
+assert.equal(typeof mayaDashboard.ownedCount, "number");
+
 const created = await request("/documents", {
   method: "POST",
   headers: { "X-User-Id": "maya" },
@@ -31,6 +36,11 @@ assert.equal(created.ownerId, "maya");
 assert.equal(created.title, "Smoke test document");
 
 const id = String(created.id);
+const fetched = await request(`/documents/${id}`, {
+  headers: { "X-User-Id": "maya" },
+});
+assert.equal(fetched.id, id);
+
 const updated = await request(`/documents/${id}`, {
   method: "PATCH",
   headers: { "X-User-Id": "maya" },
@@ -53,4 +63,15 @@ const samDocuments = (await request("/documents", {
 })) as unknown as Array<{ id: string; access: string }>;
 assert.equal(samDocuments.some((document) => document.id === id && document.access === "shared"), true);
 
-console.log("DocFlow smoke test passed: create, save, share, and shared access.");
+const imported = await request("/documents/import", {
+  method: "POST",
+  headers: { "X-User-Id": "maya" },
+  body: JSON.stringify({
+    filename: "smoke-import.md",
+    content: "# Imported smoke\n\n- Markdown import\n- Works end to end",
+  }),
+});
+assert.equal(imported.title, "smoke-import");
+assert.match(String(imported.content), /<h1>Imported smoke<\/h1>/);
+
+console.log("DocFlow smoke test passed: dashboard, create, open, save, import, share, and shared access.");

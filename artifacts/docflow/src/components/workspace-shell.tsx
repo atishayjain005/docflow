@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Link, useLocation } from 'wouter';
 import { useQueryClient } from '@tanstack/react-query';
 import { ChevronDown, FileText, FolderOpen, Home, Menu, Plus, Search, Sparkles, X } from 'lucide-react';
@@ -18,8 +18,6 @@ type WorkspaceContextValue = {
   switchUser: (id: string) => void;
 };
 
-import { createContext, useContext } from 'react';
-
 const WorkspaceContext = createContext<WorkspaceContextValue | null>(null);
 
 export function useWorkspace() {
@@ -32,7 +30,10 @@ export function WorkspaceProvider({ children }: { children: ReactNode }) {
   const [currentUserId, setCurrentUserId] = useState(() => localStorage.getItem('docflow-user-id') ?? 'maya');
   const queryClient = useQueryClient();
   const request = useMemo(() => ({ headers: { 'X-User-Id': currentUserId } }), [currentUserId]);
-  const usersQuery = useListUsers({ request });
+  const usersQuery = useListUsers({
+    request,
+    query: { queryKey: [...getListUsersQueryKey(), currentUserId] },
+  });
   const users = usersQuery.data ?? [];
   const fallback: User = { id: currentUserId, name: 'Workspace member', email: '', initials: 'WM', accent: '#d98a45' };
   const currentUser = users.find((user) => user.id === currentUserId) ?? users[0] ?? fallback;
@@ -73,7 +74,7 @@ export function UserSwitcher() {
         type="button"
         data-testid="button-user-switcher"
         onClick={() => setOpen((value) => !value)}
-        className="flex w-full items-center gap-3 rounded-xl border border-[hsl(var(--sidebar-border))] bg-[hsl(var(--sidebar-accent))] px-3 py-2.5 text-left transition hover:bg-[hsl(var(--sidebar-accent)/.8)]"
+        className="flex w-full items-center gap-3 rounded-xl border border-[hsl(var(--sidebar-border))] bg-[hsl(var(--sidebar-accent))] px-3 py-2.5 text-left transition hover:bg-[hsl(var(--sidebar-accent)/.8)] active:scale-[0.99]"
       >
         <Avatar user={currentUser} />
         <span className="min-w-0 flex-1">
@@ -91,7 +92,7 @@ export function UserSwitcher() {
               data-testid={`button-switch-user-${user.id}`}
               key={user.id}
               onClick={() => { switchUser(user.id); setOpen(false); }}
-              className={`flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left transition hover:bg-[hsl(var(--muted))] ${user.id === currentUser.id ? 'bg-[hsl(var(--muted))]' : ''}`}
+              className={`flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left transition hover:bg-[hsl(var(--muted))] active:scale-[0.99] ${user.id === currentUser.id ? 'bg-[hsl(var(--muted))] font-semibold text-[hsl(var(--primary))]' : ''}`}
             >
               <Avatar user={user} small />
               <span className="min-w-0"><span className="block truncate text-xs font-semibold">{user.name}</span><span className="block truncate text-[10px] text-[hsl(var(--muted-foreground))]">{user.email}</span></span>
@@ -116,15 +117,15 @@ export function WorkspaceShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="min-h-[100dvh] bg-[hsl(var(--background))] text-[hsl(var(--foreground))]">
-      <button type="button" data-testid="button-mobile-menu" onClick={() => setMobileOpen(true)} className="fixed left-4 top-4 z-20 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-2.5 shadow-sm md:hidden"><Menu className="h-5 w-5" /></button>
+      <button type="button" data-testid="button-mobile-menu" onClick={() => setMobileOpen(true)} className="fixed left-4 top-4 z-20 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-2.5 shadow-sm transition hover:border-[hsl(var(--primary)/.4)] hover:text-[hsl(var(--primary))] active:scale-95 md:hidden"><Menu className="h-5 w-5" /></button>
       {mobileOpen && <button type="button" aria-label="Close navigation" data-testid="button-close-mobile-menu" onClick={closeMobile} className="fixed inset-0 z-30 bg-[hsl(var(--foreground)/.28)] md:hidden"><span className="sr-only">Close navigation</span></button>}
       <aside className={`fixed inset-y-0 left-0 z-40 flex w-[270px] flex-col bg-[hsl(var(--sidebar))] px-4 py-5 text-[hsl(var(--sidebar-foreground))] transition-transform duration-300 md:translate-x-0 ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="mb-11 flex items-center justify-between px-2">
-          <Link href="/" data-testid="link-brand" onClick={closeMobile} className="flex items-center gap-2.5">
+          <Link href="/" data-testid="link-brand" onClick={closeMobile} className="flex items-center gap-2.5 rounded-lg transition hover:text-[hsl(var(--accent))] active:scale-[0.99]">
             <span className="relative grid h-9 w-9 place-items-center rounded-[11px] bg-[hsl(var(--accent))] text-[hsl(var(--foreground))] shadow-[4px_4px_0_hsl(var(--primary)/.45)]"><Sparkles className="h-4 w-4" /></span>
             <span className="text-[17px] font-extrabold tracking-[-.04em]">DocFlow</span>
           </Link>
-          <button type="button" data-testid="button-close-mobile-nav" onClick={closeMobile} className="rounded-md p-1.5 text-[hsl(var(--sidebar-foreground)/.6)] hover:bg-[hsl(var(--sidebar-accent))] md:hidden"><X className="h-4 w-4" /></button>
+          <button type="button" data-testid="button-close-mobile-nav" onClick={closeMobile} className="rounded-md p-1.5 text-[hsl(var(--sidebar-foreground)/.6)] transition hover:bg-[hsl(var(--sidebar-accent))] hover:text-[hsl(var(--sidebar-foreground))] active:scale-95 md:hidden"><X className="h-4 w-4" /></button>
         </div>
         <div className="px-2">
           <Link href="/?new=1" data-testid="link-new-document" onClick={closeMobile} className="flex items-center justify-center gap-2 rounded-xl bg-[hsl(var(--accent))] px-4 py-3 text-sm font-bold text-[hsl(var(--foreground))] shadow-[0_5px_0_hsl(var(--primary)/.28)] transition hover:-translate-y-0.5 hover:shadow-[0_7px_0_hsl(var(--primary)/.28)] active:translate-y-0 active:shadow-[0_3px_0_hsl(var(--primary)/.28)]"><Plus className="h-4 w-4" /> New document</Link>
@@ -133,7 +134,7 @@ export function WorkspaceShell({ children }: { children: ReactNode }) {
           <p className="px-3 pb-2 text-[10px] font-bold uppercase tracking-[.18em] text-[hsl(var(--sidebar-foreground)/.42)]">Your space</p>
           {navItems.map(({ href, label, icon: Icon }) => {
             const active = label === 'Workspace' ? location === '/' && !location.includes('filter') : location.includes(label === 'My documents' ? 'owned' : 'shared');
-            return <Link key={label} href={href} data-testid={`link-nav-${label.toLowerCase().replaceAll(' ', '-')}`} onClick={closeMobile} className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition ${active ? 'bg-[hsl(var(--sidebar-accent))] font-semibold text-[hsl(var(--sidebar-foreground))]' : 'text-[hsl(var(--sidebar-foreground)/.66)] hover:bg-[hsl(var(--sidebar-accent)/.65)] hover:text-[hsl(var(--sidebar-foreground))]'}`}><Icon className="h-[17px] w-[17px]" />{label}</Link>;
+            return <Link key={label} href={href} data-testid={`link-nav-${label.toLowerCase().replaceAll(' ', '-')}`} onClick={closeMobile} aria-current={active ? 'page' : undefined} className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition active:scale-[0.99] ${active ? 'bg-[hsl(var(--sidebar-accent))] font-semibold text-[hsl(var(--sidebar-foreground))] shadow-[inset_3px_0_0_hsl(var(--accent))]' : 'text-[hsl(var(--sidebar-foreground)/.66)] hover:bg-[hsl(var(--sidebar-accent)/.65)] hover:text-[hsl(var(--sidebar-foreground))]'}`}><Icon className="h-[17px] w-[17px]" />{label}</Link>;
           })}
         </nav>
         <div className="mt-auto">

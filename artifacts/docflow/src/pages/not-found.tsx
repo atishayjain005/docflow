@@ -9,7 +9,7 @@ export default function NotFound() {
         <p className="mb-3 text-[10px] font-bold uppercase tracking-[.2em] text-[hsl(var(--primary))]">A little off course</p>
         <h1 className="text-4xl font-extrabold tracking-[-.07em]">That page isn’t here.</h1>
         <p className="mt-3 text-sm leading-relaxed text-[hsl(var(--muted-foreground))]">The link may be old, or the page is still becoming something.</p>
-        <Link href="/" data-testid="link-not-found-home" className="mx-auto mt-7 flex w-fit items-center gap-2 rounded-lg bg-[hsl(var(--primary))] px-4 py-2.5 text-xs font-bold text-[hsl(var(--primary-foreground))]"><ArrowLeft className="h-3.5 w-3.5" /> Back to workspace</Link>
+        <Link href="/" data-testid="link-not-found-home" className="mx-auto mt-7 flex w-fit items-center gap-2 rounded-lg bg-[hsl(var(--primary))] px-4 py-2.5 text-xs font-bold text-[hsl(var(--primary-foreground))] transition hover:brightness-105 active:scale-[0.98]"><ArrowLeft className="h-3.5 w-3.5" /> Back to workspace</Link>
       </div>
     </div>
   );
